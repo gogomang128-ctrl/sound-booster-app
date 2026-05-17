@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔊 مكبر الصوت - Sound Booster</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="logo">
+                <span class="logo-icon">🔊</span>
+                <h1>مكبر الصوت</h1>
+            </div>
+            <p class="tagline">ارفع صوتك حتى 500%</p>
+        </header>
+
+        <!-- Main Controls -->
+        <main class="main-content">
+            <!-- Upload Section -->
+            <section class="upload-section">
+                <div class="upload-box" id="uploadBox">
+                    <input type="file" id="audioInput" accept="audio/*,video/*" hidden>
+                    <div class="upload-content">
+                        <span class="upload-icon">📁</span>
+                        <h3>اختر ملف صوتي أو فيديو</h3>
+                        <p>أو اسحب وأفلت الملف هنا</p>
+                        <button class="btn btn-primary" id="selectFileBtn">
+                            اختر ملف
+                        </button>
+                    </div>
+                </div>
+                <div class="file-info" id="fileInfo" style="display: none;">
+                    <span class="file-icon">🎵</span>
+                    <div class="file-details">
+                        <span class="file-name" id="fileName"></span>
+                        <span class="file-size" id="fileSize"></span>
+                    </div>
+                    <button class="btn-remove" id="removeFile">✕</button>
+                </div>
+            </section>
+
+            <!-- Audio Player -->
+            <section class="player-section" id="playerSection" style="display: none;">
+                <div class="waveform-container">
+                    <canvas id="waveform"></canvas>
+                    <div class="playback-progress" id="playbackProgress"></div>
+                </div>
+                
+                <div class="player-controls">
+                    <button class="control-btn" id="rewindBtn">
+                        <span>⏪</span>
+                        <small>-10s</small>
+                    </button>
+                    <button class="control-btn play-btn" id="playBtn">
+                        <span id="playIcon">▶️</span>
+                    </button>
+                    <button class="control-btn" id="forwardBtn">
+                        <span>⏩</span>
+                        <small>+10s</small>
+                    </button>
+                </div>
+
+                <div class="time-display">
+                    <span id="currentTime">0:00</span>
+                    <div class="seek-bar-container">
+                        <input type="range" id="seekBar" min="0" max="100" value="0" class="seek-bar">
+                    </div>
+                    <span id="duration">0:00</span>
+                </div>
+            </section>
+
+            <!-- Volume Boost Section -->
+            <section class="boost-section" id="boostSection" style="display: none;">
+                <h2>🚀 تكبير الصوت</h2>
+                
+                <!-- Main Volume Slider -->
+                <div class="volume-control">
+                    <div class="volume-display">
+                        <span class="volume-value" id="volumeValue">100</span>
+                        <span class="volume-percent">%</span>
+                    </div>
+                    <input type="range" id="volumeSlider" min="0" max="500" value="100" class="volume-slider">
+                    <div class="volume-labels">
+                        <span>0%</span>
+                        <span>100%</span>
+                        <span>250%</span>
+                        <span>500%</span>
+                    </div>
+                </div>
+
+                <!-- Quick Boost Buttons -->
+                <div class="quick-boost">
+                    <button class="boost-btn" data-boost="50">50%</button>
+                    <button class="boost-btn active" data-boost="100">100%</button>
+                    <button class="boost-btn" data-boost="150">150%</button>
+                    <button class="boost-btn" data-boost="200">200%</button>
+                    <button class="boost-btn" data-boost="300">300%</button>
+                    <button class="boost-btn" data-boost="500">500%</button>
+                </div>
+
+                <!-- Equalizer -->
+                <div class="equalizer-section">
+                    <div class="section-header">
+                        <h3>🎛️ المعادل الصوتي</h3>
+                        <button class="btn-toggle" id="eqToggle">
+                            <span class="toggle-slider"></span>
+                        </button>
+                    </div>
+                    
+                    <div class="equalizer" id="equalizer">
+                        <div class="eq-band">
+                            <input type="range" class="eq-slider" id="bass" min="-12" max="12" value="0" orient="vertical">
+                            <label>Bass</label>
+                            <span class="eq-value">0</span>
+                        </div>
+                        <div class="eq-band">
+                            <input type="range" class="eq-slider" id="lowMid" min="-12" max="12" value="0" orient="vertical">
+                            <label>Low Mid</label>
+                            <span class="eq-value">0</span>
+                        </div>
+                        <div class="eq-band">
+                            <input type="range" class="eq-slider" id="mid" min="-12" max="12" value="0" orient="vertical">
+                            <label>Mid</label>
+                            <span class="eq-value">0</span>
+                        </div>
+                        <div class="eq-band">
+                            <input type="range" class="eq-slider" id="highMid" min="-12" max="12" value="0" orient="vertical">
+                            <label>High Mid</label>
+                            <span class="eq-value">0</span>
+                        </div>
+                        <div class="eq-band">
+                            <input type="range" class="eq-slider" id="treble" min="-12" max="12" value="0" orient="vertical">
+                            <label>Treble</label>
+                            <span class="eq-value">0</span>
+                        </div>
+                    </div>
+
+                    <!-- EQ Presets -->
+                    <div class="eq-presets">
+                        <button class="preset-btn active" data-preset="flat">عادي</button>
+                        <button class="preset-btn" data-preset="bass">Bass Boost</button>
+                        <button class="preset-btn" data-preset="vocal">صوت واضح</button>
+                        <button class="preset-btn" data-preset="rock">Rock</button>
+                        <button class="preset-btn" data-preset="pop">Pop</button>
+                    </div>
+                </div>
+
+                <!-- Audio Effects -->
+                <div class="effects-section">
+                    <h3>✨ تأثيرات إضافية</h3>
+                    <div class="effects-grid">
+                        <div class="effect-card">
+                            <span class="effect-icon">🔈</span>
+                            <span class="effect-name">تقليل الضوضاء</span>
+                            <button class="btn-toggle effect-toggle" data-effect="noise">
+                                <span class="toggle-slider"></span>
+                            </button>
+                        </div>
+                        <div class="effect-card">
+                            <span class="effect-icon">🎤</span>
+                            <span class="effect-name">تحسين الصوت</span>
+                            <button class="btn-toggle effect-toggle" data-effect="enhance">
+                                <span class="toggle-slider"></span>
+                            </button>
+                        </div>
+                        <div class="effect-card">
+                            <span class="effect-icon">🏛️</span>
+                            <span class="effect-name">صدى</span>
+                            <button class="btn-toggle effect-toggle" data-effect="reverb">
+                                <span class="toggle-slider"></span>
+                            </button>
+                        </div>
+                        <div class="effect-card">
+                            <span class="effect-icon">📢</span>
+                            <span class="effect-name">ستيريو</span>
+                            <button class="btn-toggle effect-toggle" data-effect="stereo">
+                                <span class="toggle-slider"></span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Export Section -->
+            <section class="export-section" id="exportSection" style="display: none;">
+                <h3>💾 حفظ وتصدير</h3>
+                <div class="export-options">
+                    <div class="format-select">
+                        <label>صيغة الملف:</label>
+                        <select id="exportFormat">
+                            <option value="mp3">MP3</option>
+                            <option value="wav">WAV</option>
+                            <option value="ogg">OGG</option>
+                        </select>
+                    </div>
+                    <div class="quality-select">
+                        <label>الجودة:</label>
+                        <select id="exportQuality">
+                            <option value="128">128 kbps</option>
+                            <option value="192">192 kbps</option>
+                            <option value="256">256 kbps</option>
+                            <option value="320" selected>320 kbps</option>
+                        </select>
+                    </div>
+                </div>
+                <button class="btn btn-export" id="exportBtn">
+                    <span>📥</span> تصدير الملف
+                </button>
+                <div class="export-progress" id="exportProgress" style="display: none;">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                    <span class="progress-text" id="progressText">جاري المعالجة... 0%</span>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="app-footer">
+            <p>صنع بـ ❤️ | مكبر الصوت v2.0</p>
+        </footer>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script src="js/app.js"></script>
+</body>
+</html>
